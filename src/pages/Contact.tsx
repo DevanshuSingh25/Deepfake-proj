@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, MessageSquare, Github, FileText } from 'lucide-react';
+import { Mail, MessageSquare, FileText } from 'lucide-react';
 import { Card, CardContent } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { Toast, ToastType } from '@/components/Toast';
@@ -19,13 +19,6 @@ export default function Contact() {
       description: 'Send us an email',
       link: 'mailto:contact@deepfakeguard.ai',
       linkText: 'contact@deepfakeguard.ai',
-    },
-    {
-      icon: Github,
-      title: 'GitHub',
-      description: 'View our code',
-      link: '#github',
-      linkText: 'github.com/deepfake-guard',
     },
     {
       icon: FileText,
@@ -122,24 +115,6 @@ export default function Contact() {
                   </CardContent>
                 </Card>
               ))}
-
-              {/* Additional Info Card */}
-              <Card gradient className="p-6">
-                <h3 className="text-xl font-bold mb-4">Office Hours</h3>
-                <p className="text-muted-foreground mb-4">
-                  We typically respond within 24-48 hours during business days.
-                </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Monday - Friday:</span>
-                    <span className="font-medium">9:00 AM - 6:00 PM EST</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Weekend:</span>
-                    <span className="font-medium">Limited support</span>
-                  </div>
-                </div>
-              </Card>
             </div>
           </div>
         </div>

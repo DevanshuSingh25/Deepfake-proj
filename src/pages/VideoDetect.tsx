@@ -20,7 +20,6 @@ export default function VideoDetect() {
   const [settings, setSettings] = useState<VideoSettings>({
     frameSamplingRate: 'auto',
     faceFocus: true,
-    clipDuration: 'auto',
   });
 
   const handleFileSelect = async (selectedFile: File) => {

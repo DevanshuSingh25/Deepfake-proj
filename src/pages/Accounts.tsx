@@ -1,24 +1,71 @@
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Shield, Lock, Smartphone, User, Mail } from 'lucide-react';
 import { Card } from '@/components/Card';
 import { Tabs } from '@/components/Tabs';
 import { Button } from '@/components/Button';
 import { Toast, ToastType } from '@/components/Toast';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Accounts() {
   const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null);
+  const { user, login, register, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent, action: string) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setToast({ type: 'warning', message: `${action} - Backend integration coming soon` });
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    try {
+      await login(email, password);
+      setToast({ type: 'success', message: 'Login successful!' });
+      setTimeout(() => navigate('/'), 1500);
+    } catch (error) {
+      setToast({ type: 'error', message: error instanceof Error ? error.message : 'Login failed' });
+    }
+  };
+
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+
+    if (password !== confirmPassword) {
+      setToast({ type: 'error', message: 'Passwords do not match' });
+      return;
+    }
+
+    try {
+      await register(name, email, password);
+      setToast({ type: 'success', message: 'Registration successful!' });
+      setTimeout(() => navigate('/'), 1500);
+    } catch (error) {
+      setToast({ type: 'error', message: error instanceof Error ? error.message : 'Registration failed' });
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setToast({ type: 'success', message: 'Logged out successfully' });
+      setTimeout(() => navigate('/'), 1500);
+    } catch (error) {
+      setToast({ type: 'error', message: 'Logout failed' });
+    }
   };
 
   const loginForm = (
-    <form onSubmit={(e) => handleSubmit(e, 'Login')} className="space-y-4">
+    <form onSubmit={handleLogin} className="space-y-4">
       <div>
         <label className="block text-sm font-medium mb-2">Email</label>
         <input
           type="email"
+          name="email"
           required
           className="w-full px-4 py-3 rounded-lg bg-background border border-input focus:ring-2 focus:ring-ring focus:border-ring"
           placeholder="your@email.com"
@@ -28,6 +75,7 @@ export default function Accounts() {
         <label className="block text-sm font-medium mb-2">Password</label>
         <input
           type="password"
+          name="password"
           required
           className="w-full px-4 py-3 rounded-lg bg-background border border-input focus:ring-2 focus:ring-ring focus:border-ring"
           placeholder="••••••••"
@@ -46,19 +94,19 @@ export default function Accounts() {
       <Button type="submit" className="w-full" size="lg">
         Sign In
       </Button>
-      <a href="#forgot" className="block text-center text-sm text-primary hover:underline">
-        Forgot password?
-      </a>
     </form>
   );
 
   const registerForm = (
-    <form onSubmit={(e) => handleSubmit(e, 'Registration')} className="space-y-4">
+    <form onSubmit={handleRegister} className="space-y-4">
       <div>
         <label className="block text-sm font-medium mb-2">Name</label>
         <input
           type="text"
+          name="name"
           required
+          minLength={2}
+          maxLength={100}
           className="w-full px-4 py-3 rounded-lg bg-background border border-input focus:ring-2 focus:ring-ring focus:border-ring"
           placeholder="Your Name"
         />
@@ -67,7 +115,9 @@ export default function Accounts() {
         <label className="block text-sm font-medium mb-2">Email</label>
         <input
           type="email"
+          name="email"
           required
+          maxLength={255}
           className="w-full px-4 py-3 rounded-lg bg-background border border-input focus:ring-2 focus:ring-ring focus:border-ring"
           placeholder="your@email.com"
         />
@@ -76,8 +126,10 @@ export default function Accounts() {
         <label className="block text-sm font-medium mb-2">Password</label>
         <input
           type="password"
+          name="password"
           required
           minLength={8}
+          maxLength={100}
           className="w-full px-4 py-3 rounded-lg bg-background border border-input focus:ring-2 focus:ring-ring focus:border-ring"
           placeholder="••••••••"
         />
@@ -86,8 +138,10 @@ export default function Accounts() {
         <label className="block text-sm font-medium mb-2">Confirm Password</label>
         <input
           type="password"
+          name="confirmPassword"
           required
           minLength={8}
+          maxLength={100}
           className="w-full px-4 py-3 rounded-lg bg-background border border-input focus:ring-2 focus:ring-ring focus:border-ring"
           placeholder="••••••••"
         />
@@ -99,7 +153,7 @@ export default function Accounts() {
   );
 
   const profileForm = (
-    <form onSubmit={(e) => handleSubmit(e, 'Profile update')} className="space-y-4">
+    <div className="space-y-4">
       <div className="flex justify-center mb-6">
         <div className="w-24 h-24 rounded-full bg-gradient-hero flex items-center justify-center">
           <User className="w-12 h-12 text-white" />
@@ -110,8 +164,8 @@ export default function Accounts() {
         <input
           type="text"
           readOnly
+          value={user?.name || ''}
           className="w-full px-4 py-3 rounded-lg bg-muted border border-input cursor-not-allowed"
-          placeholder="Not logged in"
         />
       </div>
       <div>
@@ -119,14 +173,14 @@ export default function Accounts() {
         <input
           type="email"
           readOnly
+          value={user?.email || ''}
           className="w-full px-4 py-3 rounded-lg bg-muted border border-input cursor-not-allowed"
-          placeholder="Not logged in"
         />
       </div>
-      <Button type="submit" className="w-full" size="lg" disabled>
-        Edit Profile
+      <Button onClick={handleLogout} className="w-full" size="lg" variant="outline">
+        Logout
       </Button>
-    </form>
+    </div>
   );
 
   const tabs = [

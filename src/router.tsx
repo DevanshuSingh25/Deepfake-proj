@@ -7,7 +7,6 @@ const Home = lazy(() => import('./pages/Home'));
 const VideoDetect = lazy(() => import('./pages/VideoDetect'));
 const AudioDetect = lazy(() => import('./pages/AudioDetect'));
 const Accounts = lazy(() => import('./pages/Accounts'));
-const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
@@ -54,14 +53,6 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Accounts />
-          </Suspense>
-        ),
-      },
-      {
-        path: 'about',
-        element: (
-          <Suspense fallback={<PageLoader />}>
-            <About />
           </Suspense>
         ),
       },

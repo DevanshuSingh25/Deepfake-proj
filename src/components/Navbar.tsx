@@ -1,20 +1,25 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, Shield } from 'lucide-react';
+import { Menu, X, Shield, LogOut, User } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const links = [
     { to: '/', label: 'Home' },
     { to: '/video', label: 'Video Detection' },
     { to: '/audio', label: 'Audio Detection' },
-    { to: '/accounts', label: 'Accounts' },
-    { to: '/about', label: 'About' },
     { to: '/contact', label: 'Contact' },
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    setIsOpen(false);
+  };
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b glass-card-strong">
@@ -49,10 +54,42 @@ export function Navbar() {
                 {link.label}
               </NavLink>
             ))}
+            {!user && (
+              <NavLink
+                to="/accounts"
+                className={({ isActive }) =>
+                  cn(
+                    'px-4 py-2 rounded-lg text-sm font-medium transition-colors focus-ring',
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-muted'
+                  )
+                }
+              >
+                Accounts
+              </NavLink>
+            )}
           </div>
 
           {/* Right side */}
           <div className="flex items-center space-x-4">
+            {user && (
+              <div className="hidden md:flex items-center gap-3">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted">
+                  <User className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium truncate max-w-[120px]">
+                    {user.name}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors focus-ring"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            )}
             <ThemeToggle />
             
             {/* Mobile menu button */}
@@ -87,6 +124,34 @@ export function Navbar() {
                 {link.label}
               </NavLink>
             ))}
+            {user ? (
+              <>
+                <div className="px-4 py-2 text-sm text-muted-foreground">
+                  Logged in as {user.name}
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <NavLink
+                to="/accounts"
+                onClick={() => setIsOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    'block px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-muted'
+                  )
+                }
+              >
+                Accounts
+              </NavLink>
+            )}
           </div>
         )}
       </div>

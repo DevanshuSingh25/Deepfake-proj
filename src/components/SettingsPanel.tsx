@@ -4,7 +4,6 @@ import { Settings as SettingsIcon } from 'lucide-react';
 export interface VideoSettings {
   frameSamplingRate: string;
   faceFocus: boolean;
-  clipDuration: string;
 }
 
 export interface AudioSettings {
@@ -69,37 +68,6 @@ export function SettingsPanel({ type, settings, onChange }: SettingsPanelProps) 
               className="w-4 h-4 rounded border-input focus:ring-2 focus:ring-ring"
             />
           </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Clip Duration Limit
-            </label>
-            <select
-              value={videoSettings.clipDuration}
-              onChange={(e) =>
-                onChange({ ...videoSettings, clipDuration: e.target.value })
-              }
-              className="w-full px-3 py-2 rounded-lg bg-background border border-input focus:ring-2 focus:ring-ring focus:border-ring"
-            >
-              <option value="auto">Auto</option>
-              <option value="10s">10 seconds</option>
-              <option value="30s">30 seconds</option>
-              <option value="full">Full duration</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Model</label>
-            <select
-              disabled
-              className="w-full px-3 py-2 rounded-lg bg-muted border border-input opacity-60 cursor-not-allowed"
-            >
-              <option>ResNeXt + LSTM</option>
-            </select>
-            <p className="text-xs text-muted-foreground mt-1">
-              Additional models coming soon
-            </p>
-          </div>
         </CardContent>
       </Card>
     );
@@ -155,19 +123,6 @@ export function SettingsPanel({ type, settings, onChange }: SettingsPanelProps) 
             }
             className="w-4 h-4 rounded border-input focus:ring-2 focus:ring-ring"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">Model</label>
-          <select
-            disabled
-            className="w-full px-3 py-2 rounded-lg bg-muted border border-input opacity-60 cursor-not-allowed"
-          >
-            <option>ResNeXt + LSTM</option>
-          </select>
-          <p className="text-xs text-muted-foreground mt-1">
-            Additional models coming soon
-          </p>
         </div>
       </CardContent>
     </Card>
